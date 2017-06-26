@@ -6,24 +6,20 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Add a Category</h1>
-    <div>
-        {% if user.is_authenticated %}
             <form id="category_form" method="post" action="/rango/add_category/">
+                <h2 class="form-signin-heading">Add a Category</h2>
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
                 {% endfor %}
                 {% for field in form.visible_fields %}
                     {{ field.errors }}
-                    {{ field.help_text }}
-                    {{ field }}
+                    {{ field.help_text }}<br/>
+                    {{ field }}<br/>
                 {% endfor %}
-                <input type="submit" name="submit" value="Create Category" />
+                <br/>
+                <button class="btn btn-primary" type="submit" name="submit">
+                    Create Category
+                </button>
             </form>
-        {% else %}
-            <li><a href="{% url 'login' %}">Sign In</a></li>
-            <li><a href=""{% url 'register' %}">Sign Up</a></li>
-        {% endif %}
-    </div>
 {% endblock %}
