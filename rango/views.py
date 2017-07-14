@@ -11,6 +11,10 @@ from datetime import datetime
 from django.shortcuts import redirect
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth.models import User
+try:
+    from django.utils import simplejson as json
+except ImportError:
+    import json
 
 def index(request):
     # Query the database for a list of ALL categories currently stored. # Order the categories by no. likes in descending order.
@@ -52,6 +56,8 @@ def show_category(request, category_name_slug):
         # If we can't, the .get() method raises a DoesNotExist exception.
         # So the .get() method returns one model instance or raises an exception.
         category = Category.objects.get(slug=category_name_slug)
+        userlikes_list = category.likes.all()
+        context_dict['userlikes_list'] = userlikes_list
 
         # Retrieve all of the associated pages.
         # Note that filter() will return a list of page objects or an empty list
@@ -355,3 +361,25 @@ def suggest_category(request):
     cat_list = get_category_list(8, starts_with)
 
     return render(request, 'rango/cats.html', {'cats': cat_list})
+
+def like(request):
+    if request.method == 'GET':
+        user = request.user
+        cat_id = request.GET['category_id']
+        if cat_id:
+            cat = Category.objects.get(id=int(cat_id))
+
+        if cat.likes.filter(id=user.id).exists():
+            # user has already liked this category
+            # remove like/user
+            cat.likes.remove(user)
+            message = 'You disliked this'
+            likes = cat.total_likes
+        else:
+            # add a new like for a category
+            cat.likes.add(user)
+            message = 'You liked this'
+            likes = cat.total_likes
+
+    # use mimetype instead of content_type if django < 5
+    return HttpResponse(likes)

@@ -13,3 +13,13 @@ $('#suggestion').keyup(function() {
         $('#cats').html(data);
      });
 });
+$('.btn-primary').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.get('/rango/like/', {category_id: catid}, function(data) {
+        $('#like_count').html(data);
+        var $this = $(this);
+        $this.toggleClass('btn-primary');
+        $(".btn-primary span").html($(".btn-primary span").html() == 'Like' ? 'Unlike' : 'Like');
+    });
+});

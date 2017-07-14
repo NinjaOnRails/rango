@@ -9,12 +9,19 @@
     {% if category %}
         <h1>{{ category.name }}</h1>
         <div>
-        <strong id="like_count">{{ category.likes }}</strong> people like this category
+        <strong id="like_count">{{ category.total_likes }}</strong> people like this category
         {% if user.is_authenticated %}
-            <button id="likes" data-catid="{{category.id}}"
-                    class="btn btn-primary btn-sm" type="button">
-                Like
-            </button>
+            {% if user in userlikes_list %}
+                <button id="like" data-catid="{{category.id}}"
+                        class="btn btn-primary btn-sm" type="button" value="Like">
+                    <span>Unlike</span>
+                </button>
+            {% else %}
+                <button id="like" data-catid="{{category.id}}"
+                        class="btn btn-primary btn-sm" type="button" value="Like">
+                    <span>Like</span>
+                </button>
+            {% endif %}
         {% endif %}
         </div>
         {% if pages %}

@@ -5,8 +5,13 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
     views = models.IntegerField(default=0)
-    likes = models.IntegerField(default=0)
+    #likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField(User, blank=True, related_name='likes')
     slug = models.SlugField(unique=True)
+
+    @property
+    def total_likes(self):
+        return self.likes.count()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
